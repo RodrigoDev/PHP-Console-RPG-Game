@@ -4,11 +4,10 @@ include "Dice.php";
 
 class Hero {
 
-    public $health_points;
-    public $strength;
-    public $agility;
-    public $weapon;
-    public $dice_sides;
+    private $health_points;
+    private $strength;
+    private $agility;
+    private $weapon;
 
     /**
      * @return mixed
@@ -66,26 +65,12 @@ class Hero {
         $this->weapon = $weapon;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getDiceSides() {
-        return $this->dice_sides;
-    }
-
-    /**
-     * @param mixed $dice_sides
-     */
-    public function setDiceSides($dice_sides) {
-        $this->dice_sides = $dice_sides;
-    }
-
     public function attack(Hero $target) {
         $damage = Dice::roll(20) +
-            Dice::roll($this->getDiceSides()) +
+            Dice::roll($this->getWeapon()->getDiceSides()) +
             $this->getStrength() +
             $this->getWeapon()->getAttack();
-
+        echo get_class($this) . " attacks with " . $damage . " damage." . PHP_EOL;
         return $target->defend($damage);
     }
 
@@ -94,9 +79,11 @@ class Hero {
             $this->getAgility() +
             $this->getWeapon()->getDefence();
 
+        echo get_class($this) . " defends with " . $defence . " defence." . PHP_EOL;
         if($damage > $defence) {
             $damage_dealt = $damage - $defence;
             $this->setHealthPoints($this->getHealthPoints() - ($damage_dealt));
+            echo get_class($this) . ": " . $this->getHealthPoints() . " health points" . PHP_EOL;
             if($this->getHealthPoints() < 1) {
                 return false;
             }
@@ -112,22 +99,30 @@ class Hero {
 
 class Human extends Hero {
 
-    function __construct() {
-        $this->setDiceSides(6);
+    function __construct($weapon) {
         $this->setHealthPoints(12);
         $this->setStrength(1);
         $this->setAgility(2);
-        $this->setWeapon(new LongSword());
+        $this->setWeapon($weapon);
     }
 }
 
 class Orc extends Hero {
 
-    function __construct() {
-        $this->setDiceSides(8);
+    function __construct($weapon) {
         $this->setHealthPoints(20);
         $this->setStrength(2);
         $this->setAgility(0);
-        $this->setWeapon(new WoodenMace());
+        $this->setWeapon($weapon);
+    }
+}
+
+class Dwarf extends Hero {
+
+    function __construct($weapon) {
+        $this->setHealthPoints(15);
+        $this->setStrength(2);
+        $this->setAgility(-1);
+        $this->setWeapon($weapon);
     }
 }

@@ -4,7 +4,7 @@ class Arena {
 
     protected $first;
     protected $second;
-    protected $lastAttacker;
+    protected $lastAttacker = null;
 
     public function __construct($fighter1, $fighter2) {
         $this->initiativeTest($fighter1, $fighter2);
@@ -33,7 +33,6 @@ class Arena {
     }
 
     private function nextTurn() {
-        $this->lastAttacker = null;
         if($this->lastAttacker == $this->first) {
             $this->lastAttacker = $this->second;
             return $this->second->attack($this->first);
@@ -41,5 +40,6 @@ class Arena {
             $this->lastAttacker = $this->first;
             return $this->first->attack($this->second);
         }
+        echo "Next turn, last attacker " . get_class($this->lastAttacker) . PHP_EOL;
     }
 }
